@@ -17,16 +17,11 @@
 │   └── cleanup_job.py          # Scheduled cleanup of temporary files
 ├── clients/
 │   └── notion_client.py        # Notion API wrapper for OAuth and database ops
-├── models/                     # Data models and database layer
-│   ├── database.py             # Database connection and pooling utilities
-│   ├── user.py                 # User model with OAuth credentials
-│   ├── notion_schema.py        # Content Database schema mappings
-│   ├── video_content.py        # Transcription and OCR content storage
-│   └── link_database.py        # Link Database tracking
+├── prisma/
+│   └── schema.prisma           # Prisma schema definition
 ├── utils/
-│   └── logger.py               # Grafana Cloud logging configuration
-├── migrations/
-│   └── 001_initial_schema.sql  # PostgreSQL schema setup
+│   ├── logger.py               # Grafana Cloud logging configuration
+│   └── db.py                   # Prisma client initialization and utilities
 ├── scripts/
 │   ├── deploy.sh               # Cloud Run deployment script
 │   └── setup_database.sh       # Database initialization script
@@ -56,9 +51,9 @@ Each stage updates Link Database status and handles errors independently.
 
 Business logic is encapsulated in service classes (`services/`) with clear interfaces. Services are injected as dependencies into the pipeline orchestrator.
 
-### Repository Pattern
+### Prisma ORM Pattern
 
-Database operations are abstracted through model classes (`models/`) with SQLAlchemy ORM. Direct SQL is used only for migrations.
+Database operations use Prisma Client Python for type-safe queries and automatic migrations. The Prisma schema (`prisma/schema.prisma`) defines all models and relationships.
 
 ## Key Conventions
 

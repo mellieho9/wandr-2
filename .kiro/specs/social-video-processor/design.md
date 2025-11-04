@@ -292,62 +292,87 @@ class ProcessingPipeline:
 
 ## Data Models
 
-### PostgreSQL Schema
+### Prisma Schema
 
-```sql
--- User table
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    oauth_id VARCHAR(255) UNIQUE NOT NULL,
-    notion_access_token TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+```prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
--- Notion schema mappings
-CREATE TABLE notion_schemas (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    db_id VARCHAR(255) NOT NULL,
-    tag VARCHAR(100) NOT NULL,
-    schema JSONB NOT NULL,
-    prompt TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(user_id, tag)
-);
+generator client {
+  provider             = "prisma-client-py"
+  recursive_type_depth = 5
+}
 
--- Video content storage
-CREATE TABLE video_contents (
-    id SERIAL PRIMARY KEY,
-    link_entry_id VARCHAR(255) UNIQUE NOT NULL,
-    transcription TEXT,
-    ocr_content TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+model User {
+  id                  Int             @id @default(autoincrement())
+  oauthId             String          @unique @map("oauth_id")
+  notionAccessToken   String          @map("notion_access_token")
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @updatedAt @map("updated_at")
+  notionSchemas       NotionSchema[]
+  linkDatabases       LinkDatabase[]
+  processingQueue     ProcessingQueue[]
 
--- Link database tracking
-CREATE TABLE link_databases (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    db_id VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(user_id)
-);
+  @@map("users")
+}
 
--- Processing queue (optional, for async processing)
-CREATE TABLE processing_queue (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    link_entry_id VARCHAR(255) NOT NULL,
-    url TEXT NOT NULL,
-    tag VARCHAR(100) NOT NULL,
-    status VARCHAR(50) DEFAULT 'queued',
-    retry_count INTEGER DEFAULT 0,
-    error_message TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+model NotionSchema {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  dbId      String   @map("db_id")
+  tag       String
+  schema    Json
+  prompt    String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tag])
+  @@index([userId])
+  @@index([userId, tag])
+  @@map("notion_schemas")
+}
+
+model VideoContent {
+  id           Int      @id @default(autoincrement())
+  linkEntryId  String   @unique @map("link_entry_id")
+  transcription String?
+  ocrContent   String?  @map("ocr_content")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("video_contents")
+}
+
+model LinkDatabase {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique @map("user_id")
+  dbId      String   @map("db_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("link_databases")
+}
+
+model ProcessingQueue {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @map("user_id")
+  linkEntryId  String   @map("link_entry_id")
+  url          String
+  tag          String
+  status       String   @default("queued")
+  retryCount   Int      @default(0) @map("retry_count")
+  errorMessage String?  @map("error_message")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([userId])
+  @@map("processing_queue")
+}
 ```
 
 ### Notion Link Database Schema
@@ -485,12 +510,12 @@ vpc_access_connector:
 
 - `flask` - Web framework
 - `gunicorn` - WSGI server
+- `prisma` - Prisma Client Python for ORM
 - `notion-client` - Notion API wrapper
 - `yt-dlp` - Video downloader
 - `openai` - Whisper API client
 - `google-cloud-vision` - OCR service
 - `google-generativeai` - Gemini API client
-- `psycopg2-binary` - PostgreSQL driver
 - `opencv-python-headless` - Video frame extraction
 - `ffmpeg-python` - Audio extraction
 - `requests` - HTTP client
