@@ -1,0 +1,27 @@
+# Web Framework
+flask==3.0.0
+gunicorn==21.2.0
+
+# Notion API
+notion-client==2.2.1
+
+# Video Processing
+yt-dlp==2023.12.30
+opencv-python-headless==4.8.1.78
+ffmpeg-python==0.2.0
+
+# AI/ML Services
+openai==1.6.1
+google-cloud-vision==3.5.0
+google-generativeai==0.3.2
+
+# Database
+psycopg2-binary==2.9.9
+
+# Utilities
+requests==2.31.0
+python-dotenv==1.0.0
+
+# Development
+pytest==7.4.3
+pytest-asyncio==0.21.1
