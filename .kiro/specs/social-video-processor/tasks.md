@@ -24,19 +24,36 @@
     - Add helper functions for common database operations
     - _Requirements: 2.5, 8.5_
 
-- [ ] 3. Implement Notion OAuth authentication
+- [x] 3. Implement Notion OAuth authentication
 
-  - [ ] 3.1 Create Notion OAuth flow endpoints
+  - [x] 3.1 Create Notion OAuth flow endpoints
 
     - Implement `/auth/notion/login` endpoint to initiate OAuth flow in `app.py`
     - Implement `/auth/notion/callback` endpoint to handle OAuth callback and store tokens
     - Create user record in database with oauth_id and access_token
     - _Requirements: 1.1, 1.2, 1.4_
 
-  - [ ] 3.2 Create Notion API client wrapper
+  - [x] 3.2 Create Notion API client wrapper
     - Implement `clients/notion_client.py` with methods: `get_databases()`, `get_database_schema()`, `query_database()`, `create_page()`, `update_page()`
     - Add OAuth token refresh logic for expired tokens
     - _Requirements: 1.4, 2.1_
+
+- [ ] 3.5 Add Redis for OAuth state management (Production)
+
+  - [x] 3.5.1 Set up Google Cloud Memorystore Redis instance
+
+    - Create Redis instance in Google Cloud Console
+    - Configure VPC connector for Cloud Run to access Redis
+    - Add Redis connection details to environment variables (REDIS_HOST, REDIS_PORT)
+    - _Requirements: 1.1, 12.1_
+
+  - [ ] 3.5.2 Implement Redis-backed OAuth state storage
+    - Add `redis` to `requirements.txt`
+    - Create `utils/redis_client.py` with Redis connection management
+    - Update `app.py` to use Redis for `oauth_states` instead of in-memory dictionary
+    - Implement state storage with 5-minute TTL (auto-expiration)
+    - Add fallback to in-memory storage for local development when Redis is unavailable
+    - _Requirements: 1.1, 12.2_
 
 - [ ] 4. Implement database registration endpoints
 

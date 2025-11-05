@@ -21,7 +21,8 @@
 │   └── schema.prisma           # Prisma schema definition
 ├── utils/
 │   ├── logger.py               # Grafana Cloud logging configuration
-│   └── db.py                   # Prisma client initialization and utilities
+│   ├── db.py                   # Prisma client initialization and utilities
+│   └── redis_client.py         # Redis connection management for OAuth state storage
 ├── scripts/
 │   ├── deploy.sh               # Cloud Run deployment script
 │   └── setup_database.sh       # Database initialization script
@@ -61,6 +62,7 @@ Database operations use Prisma Client Python for type-safe queries and automatic
 - **Status Updates**: Link Database status field is updated at every pipeline stage: "pending" → "downloading" → "transcribing" → "processing" → "saving" → "completed" or "failed"
 - **Temporary Files**: Videos stored in `/tmp` with unique filenames, cleaned up after processing or on failure
 - **Async Processing**: Background worker polls every 60 seconds; processing queue table manages concurrent video processing
+- **OAuth State Management**: In-memory dictionary for local development; Redis (Google Cloud Memorystore) for production multi-instance deployments with 5-minute TTL
 - **Logging**: Structured JSON logs sent to Grafana Cloud with context (user_id, entry_id, stage, error details)
 - **Retry Logic**: Exponential backoff with 3 attempts for transient failures (network, rate limits)
 - **Graceful Degradation**: OCR failures don't stop processing; pipeline continues with transcription only

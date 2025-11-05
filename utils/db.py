@@ -15,15 +15,15 @@ _prisma_client = None
 def get_db() -> Prisma:
     """
     Get the global Prisma client instance.
-    
+
     Returns:
         Prisma: The Prisma client instance
     """
     global _prisma_client
-    
+
     if _prisma_client is None:
         _prisma_client = Prisma()
-    
+
     return _prisma_client
 
 
@@ -53,14 +53,14 @@ async def disconnect_db():
 async def db_transaction():
     """
     Context manager for database transactions.
-    
+
     Usage:
         async with db_transaction():
             await db.user.create(...)
             await db.notionschema.create(...)
     """
     db = get_db()
-    
+
     try:
         # Prisma Client Python handles transactions automatically
         # This context manager is for explicit transaction control if needed

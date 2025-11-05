@@ -1,0 +1,107 @@
+# Cloud Run Service Configuration Template
+# This file documents the required Cloud Run configuration for Redis connectivity
+
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: social-video-processor
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/launch-stage: BETA
+spec:
+  template:
+    metadata:
+      annotations:
+        # VPC Connector for Redis access
+        run.googleapis.com/vpc-access-connector: redis-connector
+        run.googleapis.com/vpc-access-egress: private-ranges-only
+
+        # Auto-scaling configuration
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "10"
+
+        # Cloud SQL connections (if needed)
+        # run.googleapis.com/cloudsql-instances: PROJECT_ID:REGION:INSTANCE_NAME
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      serviceAccountName: social-video-processor@PROJECT_ID.iam.gserviceaccount.com
+      containers:
+        - image: gcr.io/PROJECT_ID/social-video-processor:latest
+          ports:
+            - name: http1
+              containerPort: 8080
+          env:
+            # Notion OAuth Configuration
+            - name: NOTION_CLIENT_ID
+              value: "your_notion_client_id"
+            - name: NOTION_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: notion-client-secret
+                  key: latest
+            - name: NOTION_REDIRECT_URI
+              value: "https://social-video-processor-HASH-uc.a.run.app/auth/notion/callback"
+
+            # Redis Configuration (Google Cloud Memorystore)
+            - name: REDIS_HOST
+              value: "10.0.0.3" # Replace with your Redis instance IP
+            - name: REDIS_PORT
+              value: "6379"
+
+            # OpenAI Whisper API
+            - name: WHISPER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: whisper-api-key
+                  key: latest
+
+            # Google Gemini API
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gemini-api-key
+                  key: latest
+
+            # PostgreSQL Database
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database-url
+                  key: latest
+
+            # Grafana Cloud Logging
+            - name: GRAFANA_CLOUD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-cloud-api-key
+                  key: latest
+            - name: GRAFANA_CLOUD_URL
+              value: "https://logs-prod-us-central1.grafana.net"
+
+            # Flask Configuration
+            - name: FLASK_ENV
+              value: "production"
+            - name: FLASK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flask-secret-key
+                  key: latest
+
+            # Logging
+            - name: LOG_LEVEL
+              value: "INFO"
+
+            # Processing Configuration
+            - name: POLLING_INTERVAL_SECONDS
+              value: "60"
+            - name: MAX_CONCURRENT_PROCESSING
+              value: "5"
+
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: "1"
+              memory: 512Mi
