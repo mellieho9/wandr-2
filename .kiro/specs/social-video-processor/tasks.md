@@ -26,14 +26,14 @@
 
 - [ ] 3. Implement Notion OAuth authentication
 
-  - [ ] 3.1 Create Notion OAuth flow endpoints
+  - [x] 3.1 Create Notion OAuth flow endpoints
 
     - Implement `/auth/notion/login` endpoint to initiate OAuth flow in `app.py`
     - Implement `/auth/notion/callback` endpoint to handle OAuth callback and store tokens
     - Create user record in database with oauth_id and access_token
     - _Requirements: 1.1, 1.2, 1.4_
 
-  - [ ] 3.2 Create Notion API client wrapper
+  - [x] 3.2 Create Notion API client wrapper
     - Implement `clients/notion_client.py` with methods: `get_databases()`, `get_database_schema()`, `query_database()`, `create_page()`, `update_page()`
     - Add OAuth token refresh logic for expired tokens
     - _Requirements: 1.4, 2.1_
