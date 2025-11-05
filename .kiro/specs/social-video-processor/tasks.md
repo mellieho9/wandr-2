@@ -57,7 +57,7 @@
 
 - [ ] 4. Implement database registration endpoints
 
-  - [ ] 4.1 Create Content Database registration endpoint
+  - [x] 4.1 Create Content Database registration endpoint
 
     - Implement `POST /api/databases/register` endpoint to register Content Databases
     - Retrieve and store database schema in JSONB format in notion_schemas table
@@ -65,14 +65,14 @@
     - Allow optional custom Schema Prompt input
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
 
-  - [ ] 4.2 Create Link Database registration endpoint
+  - [x] 4.2 Create Link Database registration endpoint
 
     - Implement `POST /api/link-database/register` endpoint
     - Validate Link Database has required fields: url, tag, processing_type, status, updated_time
     - Store Link Database ID in link_databases table
     - _Requirements: 3.2, 3.3_
 
-  - [ ] 4.3 Create database listing endpoint
+  - [x] 4.3 Create database listing endpoint
     - Implement `GET /api/databases` endpoint to list registered Content Databases for authenticated user
     - Return db_id, tag, schema, and prompt for each database
     - _Requirements: 2.1_
