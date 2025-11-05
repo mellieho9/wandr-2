@@ -18,6 +18,9 @@ google-generativeai==0.3.2
 # Database
 prisma==0.11.0
 
+# Cache/Session Store
+redis==5.0.1
+
 # Utilities
 requests==2.31.0
 python-dotenv==1.0.0

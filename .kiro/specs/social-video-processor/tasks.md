@@ -47,7 +47,7 @@
     - Add Redis connection details to environment variables (REDIS_HOST, REDIS_PORT)
     - _Requirements: 1.1, 12.1_
 
-  - [ ] 3.5.2 Implement Redis-backed OAuth state storage
+  - [x] 3.5.2 Implement Redis-backed OAuth state storage
     - Add `redis` to `requirements.txt`
     - Create `utils/redis_client.py` with Redis connection management
     - Update `app.py` to use Redis for `oauth_states` instead of in-memory dictionary
