@@ -41,6 +41,11 @@ class Settings:
     # Logging
     LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
     
+    # Redis Configuration (Google Cloud Memorystore for Production)
+    # Leave empty for local development (will use in-memory storage)
+    REDIS_HOST = os.getenv('REDIS_HOST')
+    REDIS_PORT = int(os.getenv('REDIS_PORT', '6379'))
+    
     # Processing Configuration
     POLLING_INTERVAL_SECONDS = int(os.getenv('POLLING_INTERVAL_SECONDS', '60'))
     MAX_CONCURRENT_PROCESSING = int(os.getenv('MAX_CONCURRENT_PROCESSING', '5'))

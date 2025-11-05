@@ -6,6 +6,7 @@
 - **Web Framework**: Flask with Gunicorn WSGI server
 - **Deployment**: Google Cloud Run with auto-scaling
 - **Database**: PostgreSQL with Prisma ORM (Prisma Client Python)
+- **Cache/Session Store**: Redis (Google Cloud Memorystore) for OAuth state management in production
 
 ## External Services & APIs
 
@@ -19,6 +20,7 @@
 
 - `prisma` - Prisma Client Python for database ORM
 - `notion-client` - Notion API wrapper
+- `redis` - Redis client for OAuth state storage (production)
 - `yt-dlp` - Video downloader for TikTok and Instagram
 - `opencv-python-headless` - Video frame extraction
 - `ffmpeg-python` - Audio extraction from video
@@ -97,5 +99,6 @@ Required environment variables in `.env`:
 - `GEMINI_API_KEY` (Google Gemini API key)
 - `GOOGLE_APPLICATION_CREDENTIALS` (path to service account JSON)
 - `DATABASE_URL` (PostgreSQL connection string)
+- `REDIS_HOST`, `REDIS_PORT` (optional, for production OAuth state storage)
 - `GRAFANA_CLOUD_API_KEY`, `GRAFANA_CLOUD_URL`
 - `FLASK_ENV`, `LOG_LEVEL`
