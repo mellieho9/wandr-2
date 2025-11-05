@@ -25,15 +25,15 @@ model User {
 }
 
 model NotionSchema {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @map("user_id")
-  dbId      String   @map("db_id")
-  tag       String
-  schema    Json
-  prompt    String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  dbId          String   @map("db_id")
+  tag           String
+  schemaData    Json     @map("schema")
+  prompt        String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, tag])
   @@index([userId])
