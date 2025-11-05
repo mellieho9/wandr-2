@@ -5,7 +5,7 @@
 - **Runtime**: Python 3.11
 - **Web Framework**: Flask with Gunicorn WSGI server
 - **Deployment**: Google Cloud Run with auto-scaling
-- **Database**: PostgreSQL with psycopg2-binary driver
+- **Database**: PostgreSQL with Prisma ORM (Prisma Client Python)
 
 ## External Services & APIs
 
@@ -17,6 +17,7 @@
 
 ## Key Libraries
 
+- `prisma` - Prisma Client Python for database ORM
 - `notion-client` - Notion API wrapper
 - `yt-dlp` - Video downloader for TikTok and Instagram
 - `opencv-python-headless` - Video frame extraction
@@ -39,8 +40,11 @@
 # Install dependencies
 pip install -r requirements.txt
 
+# Generate Prisma Client
+prisma generate
+
 # Run database migrations
-python scripts/setup_database.py
+prisma db push
 
 # Start Flask development server
 flask run --host=0.0.0.0 --port=8080
@@ -68,8 +72,20 @@ gcloud run services describe social-video-processor --region=us-central1
 # Connect to PostgreSQL
 psql $DATABASE_URL
 
-# Run migrations
-psql $DATABASE_URL -f migrations/001_initial_schema.sql
+# Generate Prisma Client after schema changes
+prisma generate
+
+# Push schema changes to database
+prisma db push
+
+# Create a migration
+prisma migrate dev --name migration_name
+
+# Apply migrations in production
+prisma migrate deploy
+
+# Open Prisma Studio (database GUI)
+prisma studio
 ```
 
 ## Environment Configuration
