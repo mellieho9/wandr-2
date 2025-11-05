@@ -4,10 +4,17 @@
 
 ```
 .
-├── app.py                      # Flask application entry point with route definitions
+├── app.py                      # Flask application entry point - registers blueprints
 ├── config/
 │   └── settings.py             # Environment configuration and settings loader
+├── endpoints/                  # Flask Blueprint endpoints (route handlers)
+│   ├── __init__.py             # Endpoints package initialization
+│   ├── auth.py                 # Authentication endpoints (OAuth login/callback)
+│   ├── database.py             # Database management endpoints (register/list)
+│   └── health.py               # Health check endpoint
 ├── services/                   # Business logic and processing services
+│   ├── __init__.py             # Services package initialization
+│   ├── auth_service.py         # OAuth token exchange and user management
 │   ├── database_monitor.py     # Background worker polling Link Database
 │   ├── video_downloader.py     # Video download from TikTok/Instagram
 │   ├── whisper_service.py      # Audio transcription via Whisper API
@@ -48,9 +55,19 @@ Processing follows a sequential pipeline pattern:
 
 Each stage updates Link Database status and handles errors independently.
 
+### Blueprint Pattern
+
+Flask endpoints are organized into Blueprints (`endpoints/`) for better modularity:
+
+- `auth_bp`: Authentication endpoints (`/auth/*`)
+- `database_bp`: Database management endpoints (`/api/*`)
+- `health_bp`: Health check endpoint (`/health`)
+
+Each blueprint is registered in `app.py` and handles its own route definitions.
+
 ### Service Layer Pattern
 
-Business logic is encapsulated in service classes (`services/`) with clear interfaces. Services are injected as dependencies into the pipeline orchestrator.
+Business logic is encapsulated in service classes (`services/`) with clear interfaces. Services are injected as dependencies into endpoints and the pipeline orchestrator. This separation keeps route handlers thin and focused on HTTP concerns.
 
 ### Prisma ORM Pattern
 
