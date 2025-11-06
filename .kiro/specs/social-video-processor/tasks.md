@@ -55,7 +55,7 @@
     - Add fallback to in-memory storage for local development when Redis is unavailable
     - _Requirements: 1.1, 12.2_
 
-- [ ] 4. Implement database registration endpoints
+- [x] 4. Implement database registration endpoints
 
   - [x] 4.1 Create Content Database registration endpoint
 
