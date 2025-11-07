@@ -78,7 +78,7 @@
     - Return db_id, tag, schema, and prompt for each database
     - _Requirements: 2.1_
 
-  - [ ] 4.4 Create test page for OAuth and database endpoints
+  - [x] 4.4 Create test page for OAuth and database endpoints
 
     - Build the React frontend using Vite (`npm run build` in wandr-2/frontend/)
     - Create endpoint `GET /` to serve the built frontend index.html
