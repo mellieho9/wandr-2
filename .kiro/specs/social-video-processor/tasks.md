@@ -55,7 +55,7 @@
     - Add fallback to in-memory storage for local development when Redis is unavailable
     - _Requirements: 1.1, 12.2_
 
-- [ ] 4. Implement database registration endpoints
+- [x] 4. Implement database registration endpoints
 
   - [x] 4.1 Create Content Database registration endpoint
 
@@ -73,9 +73,19 @@
     - _Requirements: 3.2, 3.3_
 
   - [x] 4.3 Create database listing endpoint
+
     - Implement `GET /api/databases` endpoint to list registered Content Databases for authenticated user
     - Return db_id, tag, schema, and prompt for each database
     - _Requirements: 2.1_
+
+  - [x] 4.4 Create test page for OAuth and database endpoints
+
+    - Build the React frontend using Vite (`npm run build` in wandr-2/frontend/)
+    - Create endpoint `GET /` to serve the built frontend index.html
+    - Configure Flask to serve static assets from frontend/build directory
+    - Update frontend to call Flask API endpoints for OAuth and database operations
+    - Test OAuth flow and database registration through the UI
+    - _Requirements: 1.1, 2.1, 3.2_
 
 - [ ] 5. Implement video downloader service
 
