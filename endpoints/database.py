@@ -14,6 +14,22 @@ logger = logging.getLogger(__name__)
 database_bp = Blueprint("database", __name__, url_prefix="/api")
 
 
+def run_async(coro):
+    """Helper to run async functions in Flask endpoints"""
+    # Always create a fresh event loop for each request to avoid
+    # "bound to a different event loop" errors with Prisma
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    
+    try:
+        result = loop.run_until_complete(coro)
+        return result
+    finally:
+        # Don't close the loop immediately as Prisma might need it
+        # Let it be garbage collected
+        pass
+
+
 @database_bp.route("/databases/register", methods=["POST"])
 def register_content_database():
     """
@@ -42,12 +58,9 @@ def register_content_database():
             return jsonify({"error": "tag is required"}), 400
 
         # Call service layer
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        result = loop.run_until_complete(
+        result = run_async(
             DatabaseService.register_content_database(user_id, db_id, tag, prompt)
         )
-        loop.close()
 
         return jsonify(result[0]), result[1]
 
@@ -69,12 +82,9 @@ def list_databases():
             return jsonify({"error": "Unauthorized - please login first"}), 401
 
         # Call service layer
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        result = loop.run_until_complete(
+        result = run_async(
             DatabaseService.list_registered_databases(user_id)
         )
-        loop.close()
 
         return jsonify(result[0]), result[1]
 
@@ -96,12 +106,9 @@ def list_available_databases():
             return jsonify({"error": "Unauthorized - please login first"}), 401
 
         # Call service layer
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        result = loop.run_until_complete(
+        result = run_async(
             DatabaseService.list_available_databases(user_id)
         )
-        loop.close()
 
         return jsonify(result[0]), result[1]
 
@@ -134,12 +141,9 @@ def register_link_database():
             return jsonify({"error": "db_id is required"}), 400
 
         # Call service layer
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        result = loop.run_until_complete(
+        result = run_async(
             DatabaseService.register_link_database(user_id, db_id)
         )
-        loop.close()
 
         return jsonify(result[0]), result[1]
 

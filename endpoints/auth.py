@@ -118,14 +118,12 @@ def notion_callback():
 
         logger.info("User authenticated successfully: %s", user.id)
 
-        return jsonify(
-            {
-                "success": True,
-                "message": "Authentication successful",
-                "user_id": user.id,
-                "oauth_id": user.oauthId,
-            }
-        ), 200
+        # Store user_id in session for subsequent API calls
+        from flask import session
+        session['user_id'] = user.id
+
+        # Redirect to frontend with success parameters
+        return redirect(f"/?success=true&user_id={user.id}")
 
     except requests.RequestException as e:
         logger.error("HTTP request failed during OAuth: %s", e)

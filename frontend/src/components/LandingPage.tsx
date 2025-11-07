@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { Link, Sparkles, MapPin } from "lucide-react";
 import { CIcon } from "@coreui/icons-react";
 import { cibNotion } from "@coreui/icons";
+import { API_ENDPOINTS } from "../config";
 
 interface LandingPageProps {
   onAuthenticate: () => void;
@@ -10,11 +11,8 @@ interface LandingPageProps {
 
 export function LandingPage({ onAuthenticate }: LandingPageProps) {
   const handleNotionConnect = () => {
-    // Mock OAuth flow - in production this would redirect to Notion OAuth
-    console.log("Initiating Notion OAuth...");
-    setTimeout(() => {
-      onAuthenticate();
-    }, 1000);
+    // Redirect to Flask OAuth endpoint
+    window.location.href = API_ENDPOINTS.AUTH_LOGIN;
   };
 
   return (

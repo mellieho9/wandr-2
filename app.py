@@ -8,6 +8,7 @@ import logging
 import os
 
 from flask import Flask, jsonify, send_from_directory
+from flask_cors import CORS
 
 from config.settings import Settings
 from utils.redis_client import get_redis_client
@@ -26,6 +27,9 @@ app = Flask(
 # Load configuration
 settings = Settings()
 app.config["SECRET_KEY"] = settings.FLASK_SECRET_KEY
+
+# Enable CORS for development (frontend dev server runs on different port)
+CORS(app, supports_credentials=True, origins=["http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:3000", "http://127.0.0.1:5173"])
 
 # Configure logging
 logging.basicConfig(

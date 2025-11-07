@@ -5,26 +5,26 @@ Prisma client initialization and database utilities.
 from prisma import Prisma
 from contextlib import asynccontextmanager
 import logging
+import threading
 
 logger = logging.getLogger(__name__)
 
-# Global Prisma client instance
-_prisma_client = None
+# Thread-local storage for Prisma client instances
+_thread_local = threading.local()
 
 
 def get_db() -> Prisma:
     """
-    Get the global Prisma client instance.
+    Get a thread-local Prisma client instance.
+    This ensures each thread/request has its own client to avoid event loop conflicts.
 
     Returns:
         Prisma: The Prisma client instance
     """
-    global _prisma_client
+    if not hasattr(_thread_local, 'prisma_client') or _thread_local.prisma_client is None:
+        _thread_local.prisma_client = Prisma()
 
-    if _prisma_client is None:
-        _prisma_client = Prisma()
-
-    return _prisma_client
+    return _thread_local.prisma_client
 
 
 async def connect_db():
