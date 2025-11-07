@@ -1,29 +1,45 @@
 # Project Structure
 
-## Directory Organization
+## Monorepo Organization
+
+This is a monorepo with separate backend and frontend directories:
 
 ```
 .
-├── app.py                      # Flask application entry point - registers blueprints, serves frontend
-├── config/
-│   └── settings.py             # Environment configuration and settings loader
-├── endpoints/                  # Flask Blueprint endpoints (route handlers)
-│   ├── __init__.py             # Endpoints package initialization
-│   ├── auth.py                 # Authentication endpoints (OAuth login/callback)
-│   ├── database.py             # Database management endpoints (register/list)
-│   └── health.py               # Health check endpoint
-├── services/                   # Business logic and processing services
-│   ├── __init__.py             # Services package initialization
-│   ├── auth_service.py         # OAuth token exchange and user management
-│   ├── database_monitor.py     # Background worker polling Link Database
-│   ├── video_downloader.py     # Video download from TikTok/Instagram
-│   ├── whisper_service.py      # Audio transcription via Whisper API
-│   ├── ocr_service.py          # Text extraction via Google Vision OCR
-│   ├── gemini_summarizer.py    # Schema-specific summarization via Gemini
-│   ├── processing_pipeline.py  # Orchestrates full processing workflow
-│   └── cleanup_job.py          # Scheduled cleanup of temporary files
-├── clients/
-│   └── notion_client.py        # Notion API wrapper for OAuth and database ops
+├── backend/                    # Flask backend service
+│   ├── app.py                  # Flask application entry point - registers blueprints, serves frontend
+│   ├── config/
+│   │   └── settings.py         # Environment configuration and settings loader
+│   ├── endpoints/              # Flask Blueprint endpoints (route handlers)
+│   │   ├── __init__.py         # Endpoints package initialization
+│   │   ├── auth.py             # Authentication endpoints (OAuth login/callback)
+│   │   ├── database.py         # Database management endpoints (register/list)
+│   │   └── health.py           # Health check endpoint
+│   ├── services/               # Business logic and processing services
+│   │   ├── __init__.py         # Services package initialization
+│   │   ├── auth_service.py     # OAuth token exchange and user management
+│   │   ├── database_monitor.py # Background worker polling Link Database
+│   │   ├── video_downloader.py # Video download from TikTok/Instagram
+│   │   ├── whisper_service.py  # Audio transcription via Whisper API
+│   │   ├── ocr_service.py      # Text extraction via Google Vision OCR
+│   │   ├── gemini_summarizer.py # Schema-specific summarization via Gemini
+│   │   ├── processing_pipeline.py # Orchestrates full processing workflow
+│   │   └── cleanup_job.py      # Scheduled cleanup of temporary files
+│   ├── clients/
+│   │   └── notion_client.py    # Notion API wrapper for OAuth and database ops
+│   ├── prisma/
+│   │   └── schema.prisma       # Prisma schema definition
+│   ├── utils/
+│   │   ├── db.py               # Prisma client initialization and utilities
+│   │   └── redis_client.py     # Redis connection management for OAuth state storage
+│   ├── tests/                  # Test suite
+│   │   ├── conftest.py         # Pytest fixtures and test utilities
+│   │   ├── fixtures/           # Sample videos and test data
+│   │   ├── test_pipeline.py    # End-to-end integration tests
+│   │   └── test_*.py           # Service-specific test files
+│   ├── requirements.txt        # Python dependencies
+│   ├── cloud-run-config.yaml   # Cloud Run service configuration
+│   └── .venv/                  # Python virtual environment (gitignored)
 ├── frontend/                   # React frontend (Vite + TypeScript)
 │   ├── src/
 │   │   ├── components/         # React components (LandingPage, DatabaseSelection, etc.)
@@ -33,28 +49,15 @@
 │   ├── build/                  # Production build output (served by Flask)
 │   ├── vite.config.ts          # Vite configuration with proxy to Flask
 │   ├── package.json            # Frontend dependencies
-│   └── index.html              # HTML template
-├── prisma/
-│   └── schema.prisma           # Prisma schema definition
-├── utils/
-│   ├── logger.py               # Grafana Cloud logging configuration
-│   ├── db.py                   # Prisma client initialization and utilities
-│   └── redis_client.py         # Redis connection management for OAuth state storage
+│   ├── index.html              # HTML template
+│   └── node_modules/           # Node dependencies (gitignored)
 ├── scripts/
 │   ├── deploy.sh               # Cloud Run deployment script
 │   ├── setup_database.sh       # Database initialization script
-│   ├── setup_redis.sh          # Redis/VPC connector setup for Cloud Run
-│   └── dev.sh                  # Start both Flask and React dev servers
-├── tests/                      # Test suite
-│   ├── conftest.py             # Pytest fixtures and test utilities
-│   ├── fixtures/               # Sample videos and test data
-│   ├── test_pipeline.py        # End-to-end integration tests
-│   └── test_*.py               # Service-specific test files
-├── requirements.txt            # Python dependencies
-├── Dockerfile                  # Container image definition
-├── cloudbuild.yaml             # Google Cloud Build configuration
-├── cloud-run-config.yaml       # Cloud Run service configuration
-└── .env.example                # Environment variable template
+│   └── setup_redis.sh          # Redis/VPC connector setup for Cloud Run
+├── .env                        # Environment variables (gitignored)
+├── .env.example                # Environment variable template
+└── .gitignore                  # Git ignore patterns
 ```
 
 ## Architecture Patterns
@@ -102,7 +105,7 @@ http://localhost:3000            http://localhost:8080
 ```
 Flask Server (Cloud Run)
         │
-        ├── Static Files (React Build) → Served from frontend/build/
+        ├── Static Files (React Build) → Served from ../frontend/build/
         └── API Endpoints (/api, /auth) → Flask Blueprints
 ```
 
@@ -130,23 +133,26 @@ Flask Server (Cloud Run)
 
 ```bash
 # Backend setup
+cd backend
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 prisma generate
 prisma db push
 
-# Frontend setup
+# Frontend setup (in a new terminal)
 cd frontend
 npm install
-cd ..
 
 # Start both servers
-./scripts/dev.sh
+# Terminal 1 - Backend:
+cd backend
+source .venv/bin/activate
+flask run --host=0.0.0.0 --port=8080
 
-# Or manually:
-# Terminal 1: flask run --host=0.0.0.0 --port=8080
-# Terminal 2: cd frontend && npm run dev
+# Terminal 2 - Frontend:
+cd frontend
+npm run dev
 ```
 
 ### Production Build
@@ -155,7 +161,8 @@ cd ..
 # Build frontend
 cd frontend && npm run build && cd ..
 
-# Flask serves both frontend and API
+# Flask serves both frontend and API (from backend directory)
+cd backend
 flask run --host=0.0.0.0 --port=8080
 ```
 

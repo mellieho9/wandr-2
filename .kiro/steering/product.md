@@ -40,7 +40,7 @@ The application includes a React frontend that provides:
 
 ### Local Development Testing
 
-1. Start Flask backend: `flask run --host=0.0.0.0 --port=8080`
+1. Start Flask backend: `cd backend && flask run --host=0.0.0.0 --port=8080`
 2. Start React frontend: `cd frontend && npm run dev`
 3. Visit http://localhost:3000
 4. Test OAuth flow and database registration
@@ -48,7 +48,7 @@ The application includes a React frontend that provides:
 ### Production Build Testing
 
 1. Build frontend: `cd frontend && npm run build`
-2. Start Flask: `flask run --host=0.0.0.0 --port=8080`
+2. Start Flask: `cd backend && flask run --host=0.0.0.0 --port=8080`
 3. Visit http://localhost:8080
 4. Verify all features work with production build
 

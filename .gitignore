@@ -112,3 +112,10 @@ frontend/dist/
 frontend/.vite/
 frontend/package-lock.json
 frontend/yarn.lock
+
+# Backend
+backend/.venv/
+backend/__pycache__/
+backend/*.pyc
+backend/.pytest_cache/
+backend/.ruff_cache/

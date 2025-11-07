@@ -17,8 +17,8 @@ from endpoints.database import database_bp
 from endpoints.health import health_bp
 
 # Initialize Flask application
-# Set static folder to serve frontend build files
-app = Flask(__name__, static_folder="frontend/build", static_url_path="")
+# Set static folder to serve frontend build files (relative to backend/)
+app = Flask(__name__, static_folder="../frontend/build", static_url_path="")
 
 # Load configuration
 settings = Settings()

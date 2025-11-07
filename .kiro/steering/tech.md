@@ -49,6 +49,11 @@
 ### Local Development
 
 ```bash
+# Backend setup
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+
 # Install dependencies
 pip install -r requirements.txt
 
@@ -63,6 +68,11 @@ flask run --host=0.0.0.0 --port=8080
 
 # Run tests
 pytest tests/
+
+# Frontend setup (in a new terminal)
+cd frontend
+npm install
+npm run dev
 ```
 
 ### Deployment
