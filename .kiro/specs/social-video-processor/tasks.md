@@ -73,9 +73,28 @@
     - _Requirements: 3.2, 3.3_
 
   - [x] 4.3 Create database listing endpoint
+
     - Implement `GET /api/databases` endpoint to list registered Content Databases for authenticated user
     - Return db_id, tag, schema, and prompt for each database
     - _Requirements: 2.1_
+
+  - [ ] 4.4 Create test page for OAuth and database endpoints
+
+    - Build the React frontend using Vite (`npm run build` in frontend/)
+    - Create endpoint `GET /` to serve the built frontend index.html
+    - Configure Flask to serve static assets from frontend/build directory
+    - Update frontend to call Flask API endpoints for OAuth and database operations
+    - Test OAuth flow and database registration through the UI
+    - _Requirements: 1.1, 2.1, 3.2_
+
+  - [ ] 4.4 Create test page for OAuth and database endpoints
+    - Create `templates/` directory for HTML templates
+    - Create `static/` directory for CSS and JavaScript files
+    - Implement `GET /test` endpoint to serve the test page
+    - Serve existing front-end HTML/CSS/JS that tests OAuth flow and database endpoints
+    - Add route to serve static files (CSS, JS)
+    - Update Flask app to enable template rendering
+    - _Requirements: 1.1, 2.1, 3.2_
 
 - [ ] 5. Implement video downloader service
 

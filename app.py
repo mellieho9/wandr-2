@@ -5,8 +5,9 @@ transcription, OCR, and summarization pipeline.
 """
 
 import logging
+import os
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 
 from config.settings import Settings
 from utils.redis_client import get_redis_client
@@ -15,7 +16,12 @@ from endpoints.database import database_bp
 from endpoints.health import health_bp
 
 # Initialize Flask application
-app = Flask(__name__)
+# Set static folder to serve frontend build files
+app = Flask(
+    __name__,
+    static_folder="frontend/build",
+    static_url_path=""
+)
 
 # Load configuration
 settings = Settings()
@@ -41,9 +47,38 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(database_bp)
 
 
+@app.route("/")
+def serve_frontend():
+    """Serve the React frontend"""
+    frontend_build = os.path.join(app.static_folder or "", "index.html")
+    if os.path.exists(frontend_build):
+        return send_from_directory(app.static_folder or "", "index.html")
+    else:
+        return jsonify({
+            "message": "Frontend not built yet",
+            "instructions": "Run 'cd frontend && npm install && npm run build' to build the frontend"
+        }), 404
+
+
+@app.route("/<path:path>")
+def serve_static(path):
+    """Serve static files or fallback to index.html for client-side routing"""
+    frontend_build = app.static_folder or ""
+    file_path = os.path.join(frontend_build, path)
+    
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        return send_from_directory(frontend_build, path)
+    else:
+        # Fallback to index.html for client-side routing
+        index_path = os.path.join(frontend_build, "index.html")
+        if os.path.exists(index_path):
+            return send_from_directory(frontend_build, "index.html")
+        return jsonify({"error": "Not found"}), 404
+
+
 @app.errorhandler(404)
-def not_found(error):
-    """Handle 404 errors"""
+def not_found(_error):
+    """Handle 404 errors for API routes"""
     return jsonify({"error": "Not found"}), 404
 
 
