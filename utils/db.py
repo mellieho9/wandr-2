@@ -21,7 +21,10 @@ def get_db() -> Prisma:
     Returns:
         Prisma: The Prisma client instance
     """
-    if not hasattr(_thread_local, 'prisma_client') or _thread_local.prisma_client is None:
+    if (
+        not hasattr(_thread_local, "prisma_client")
+        or _thread_local.prisma_client is None
+    ):
         _thread_local.prisma_client = Prisma()
 
     return _thread_local.prisma_client

@@ -18,18 +18,23 @@ from endpoints.health import health_bp
 
 # Initialize Flask application
 # Set static folder to serve frontend build files
-app = Flask(
-    __name__,
-    static_folder="frontend/build",
-    static_url_path=""
-)
+app = Flask(__name__, static_folder="frontend/build", static_url_path="")
 
 # Load configuration
 settings = Settings()
 app.config["SECRET_KEY"] = settings.FLASK_SECRET_KEY
 
 # Enable CORS for development (frontend dev server runs on different port)
-CORS(app, supports_credentials=True, origins=["http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:3000", "http://127.0.0.1:5173"])
+CORS(
+    app,
+    supports_credentials=True,
+    origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5173",
+    ],
+)
 
 # Configure logging
 logging.basicConfig(
@@ -58,10 +63,12 @@ def serve_frontend():
     if os.path.exists(frontend_build):
         return send_from_directory(app.static_folder or "", "index.html")
     else:
-        return jsonify({
-            "message": "Frontend not built yet",
-            "instructions": "Run 'cd frontend && npm install && npm run build' to build the frontend"
-        }), 404
+        return jsonify(
+            {
+                "message": "Frontend not built yet",
+                "instructions": "Run 'cd frontend && npm install && npm run build' to build the frontend",
+            }
+        ), 404
 
 
 @app.route("/<path:path>")
@@ -69,7 +76,7 @@ def serve_static(path):
     """Serve static files or fallback to index.html for client-side routing"""
     frontend_build = app.static_folder or ""
     file_path = os.path.join(frontend_build, path)
-    
+
     if os.path.exists(file_path) and os.path.isfile(file_path):
         return send_from_directory(frontend_build, path)
     else:

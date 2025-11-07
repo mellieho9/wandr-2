@@ -20,7 +20,7 @@ def run_async(coro):
     # "bound to a different event loop" errors with Prisma
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    
+
     try:
         result = loop.run_until_complete(coro)
         return result
@@ -82,9 +82,7 @@ def list_databases():
             return jsonify({"error": "Unauthorized - please login first"}), 401
 
         # Call service layer
-        result = run_async(
-            DatabaseService.list_registered_databases(user_id)
-        )
+        result = run_async(DatabaseService.list_registered_databases(user_id))
 
         return jsonify(result[0]), result[1]
 
@@ -106,9 +104,7 @@ def list_available_databases():
             return jsonify({"error": "Unauthorized - please login first"}), 401
 
         # Call service layer
-        result = run_async(
-            DatabaseService.list_available_databases(user_id)
-        )
+        result = run_async(DatabaseService.list_available_databases(user_id))
 
         return jsonify(result[0]), result[1]
 
@@ -141,9 +137,7 @@ def register_link_database():
             return jsonify({"error": "db_id is required"}), 400
 
         # Call service layer
-        result = run_async(
-            DatabaseService.register_link_database(user_id, db_id)
-        )
+        result = run_async(DatabaseService.register_link_database(user_id, db_id))
 
         return jsonify(result[0]), result[1]
 

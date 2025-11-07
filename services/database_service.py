@@ -51,7 +51,10 @@ class DatabaseService:
             notion_client = NotionClient(user.notionAccessToken)
             schema_data = notion_client.get_database_schema(db_id)
 
-            logger.info("Schema data properties: %s", list(schema_data.get("properties", {}).keys()))
+            logger.info(
+                "Schema data properties: %s",
+                list(schema_data.get("properties", {}).keys()),
+            )
 
             # Store schema in database
             # Pass the dict directly - Prisma will handle JSON serialization
@@ -61,23 +64,28 @@ class DatabaseService:
                 "tag": tag,
                 "schemaData": schema_data["properties"],
             }
-            
+
             if prompt:
                 create_data["prompt"] = prompt
-            
+
             # Use execute_raw to bypass GraphQL parsing issues with special characters in JSON keys
             import json
+
             schema_json_str = json.dumps(schema_data["properties"])
-            
+
             notion_schema = await db.query_raw(
                 f"""
                 INSERT INTO notion_schemas (user_id, db_id, tag, schema, prompt, created_at, updated_at)
                 VALUES ($1, $2, $3, $4::jsonb, $5, NOW(), NOW())
                 RETURNING id, user_id, db_id, tag, schema, prompt, created_at, updated_at
                 """,
-                user_id, db_id, tag, schema_json_str, prompt
+                user_id,
+                db_id,
+                tag,
+                schema_json_str,
+                prompt,
             )
-            
+
             if not notion_schema or len(notion_schema) == 0:
                 raise Exception("Failed to insert schema into database")
 

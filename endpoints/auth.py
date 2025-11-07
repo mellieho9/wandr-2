@@ -120,7 +120,8 @@ def notion_callback():
 
         # Store user_id in session for subsequent API calls
         from flask import session
-        session['user_id'] = user.id
+
+        session["user_id"] = user.id
 
         # Redirect to frontend with success parameters
         return redirect(f"/?success=true&user_id={user.id}")
