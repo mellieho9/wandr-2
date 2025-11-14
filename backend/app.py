@@ -15,6 +15,7 @@ from utils.redis_client import get_redis_client
 from endpoints.auth import auth_bp
 from endpoints.database import database_bp
 from endpoints.health import health_bp
+from endpoints.prompts import prompts_bp
 
 # Initialize Flask application
 # Set static folder to serve frontend build files (relative to backend/)
@@ -54,6 +55,7 @@ logger.info(
 app.register_blueprint(health_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(database_bp)
+app.register_blueprint(prompts_bp)
 
 
 @app.route("/")
