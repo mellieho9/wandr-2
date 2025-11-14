@@ -1,0 +1,12 @@
+# Copy this file to terraform.tfvars and fill in your values
+# cp terraform.tfvars.example terraform.tfvars
+
+project_id = "your-gcp-project-id"
+region     = "us-central1"
+
+# Set to false if you don't need Redis (will only create VPC connector)
+create_redis = true
+
+# Redis configuration
+redis_tier    = "BASIC"      # BASIC or STANDARD_HA
+redis_size_gb = 1            # Minimum 1 GB
